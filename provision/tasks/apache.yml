@@ -1,0 +1,17 @@
+---
+- name: install apache
+  apt: name=apache2 update_cache=yes cache_valid_time=86400 state=present
+
+- name: enable mod_rewrite
+  apache2_module: name=rewrite state=present
+
+- name: change apache2 document root path
+  replace:
+    dest=/etc/apache2/sites-available/000-default.conf
+    regexp='^(\s+)DocumentRoot /var/www/html'
+    replace='\1DocumentRoot /var/www/public'
+  notify:
+    - restart apache
+
+- name: delete default apache directory
+  file: path=/var/www/html state=absent

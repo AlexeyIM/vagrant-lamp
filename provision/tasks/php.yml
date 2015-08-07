@@ -1,0 +1,58 @@
+---
+- name: install php
+  apt: name={{ item }} update_cache=yes cache_valid_time=86400 state=present
+  with_items:
+    - php5
+    - libapache2-mod-php5
+    - mcrypt
+    - phpunit
+    - sqlite3
+    - php-pear
+    - php5-cli
+    - php5-common
+    - php5-curl
+    - php5-dev
+    - php5-gd
+    - php5-intl
+    - php5-json
+    - php5-mcrypt
+    - php5-memcache
+    - php5-memcached
+    - php5-sqlite
+    - php5-twig
+    - php5-xsl
+  notify:
+    - restart apache
+
+- name: enable php5 mcrypt module
+  shell: php5enmod mcrypt
+  args:
+    creates: /etc/php5/cli/conf.d/20-mcrypt.ini
+
+- name: install composer
+  shell: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+  args:
+    creates: /usr/local/bin/composer
+
+- name: enable php errors showing
+  lineinfile: dest=/etc/php5/apache2/php.ini line="display_errors = On"
+  lineinfile: dest=/etc/php5/cli/php.ini line="display_errors = On"
+  notify:
+    - restart apache
+
+- name: enable php startup errors showing
+  lineinfile: dest=/etc/php5/apache2/php.ini line="display_startup_errors = On"
+  lineinfile: dest=/etc/php5/cli/php.ini line="display_startup_errors = On"
+  notify:
+    - restart apache
+
+- name: enable php error reporting
+  lineinfile: dest=/etc/php5/apache2/php.ini line="error_reporting = E_ALL | E_STRICT"
+  lineinfile: dest=/etc/php5/cli/php.ini line="error_reporting = E_ALL | E_STRICT"
+  notify:
+    - restart apache
+
+- name: enable php short open tags
+  lineinfile: dest=/etc/php5/apache2/php.ini line="short_open_tag = On"
+  notify:
+    - restart apache

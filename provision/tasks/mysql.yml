@@ -1,0 +1,25 @@
+---
+- name: install mysql
+  apt: name={{ item }} update_cache=yes cache_valid_time=86400 state=present
+  with_items:
+    - mysql-server
+    - mysql-client
+    - php5-mysqlnd
+    - python-mysqldb
+    - libapache2-mod-auth-mysql
+    - phpmyadmin
+  notify:
+    - restart apache
+
+- name: add mysqladmin to apache2 config
+  lineinfile: dest=/etc/apache2/apache2.conf line="Include /etc/phpmyadmin/apache.conf"
+  notify:
+    - restart apache
+
+- name: enable mysqladmin login with empty password
+  replace:
+    dest=/etc/phpmyadmin/config.inc.php
+    regexp="^(\s+)\/\/ \$cfg\['Servers'\]\[\$i\]\['AllowNoPassword'\] = TRUE;"
+    replace="\1$cfg['Servers'][$i]['AllowNoPassword'] = TRUE;"
+  notify:
+    - restart apache

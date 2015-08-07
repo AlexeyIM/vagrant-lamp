@@ -1,0 +1,10 @@
+---
+- hosts: all
+  sudo: true
+  tasks:
+    - include: tasks/system.yml
+    - include: tasks/apache.yml
+    - include: tasks/php.yml
+    - include: tasks/mysql.yml
+  handlers:
+    - include: handlers.yml

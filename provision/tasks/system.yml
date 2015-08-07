@@ -1,0 +1,5 @@
+---
+- name: set system locale
+  shell: /var/www/provision/scripts/set_locale.sh >> /var/log/ansible_set_locale5.log
+  args:
+    creates: /var/log/ansible_set_locale5.log
