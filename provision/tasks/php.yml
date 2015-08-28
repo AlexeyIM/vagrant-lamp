@@ -35,20 +35,35 @@
     creates: /usr/local/bin/composer
 
 - name: enable php errors showing
-  lineinfile: dest=/etc/php5/apache2/php.ini line="display_errors = On"
-  lineinfile: dest=/etc/php5/cli/php.ini line="display_errors = On"
+  replace:
+    dest={{ item }}
+    regexp='^display_errors = Off'
+    replace='display_errors = On'
+  with_items:
+    - /etc/php5/apache2/php.ini
+    - /etc/php5/cli/php.ini
   notify:
     - restart apache
 
 - name: enable php startup errors showing
-  lineinfile: dest=/etc/php5/apache2/php.ini line="display_startup_errors = On"
-  lineinfile: dest=/etc/php5/cli/php.ini line="display_startup_errors = On"
+  replace:
+    dest={{ item }}
+    regexp='^display_startup_errors = Off'
+    replace='display_startup_errors = On'
+  with_items:
+    - /etc/php5/apache2/php.ini
+    - /etc/php5/cli/php.ini
   notify:
     - restart apache
 
 - name: enable php error reporting
-  lineinfile: dest=/etc/php5/apache2/php.ini line="error_reporting = E_ALL | E_STRICT"
-  lineinfile: dest=/etc/php5/cli/php.ini line="error_reporting = E_ALL | E_STRICT"
+  replace:
+    dest={{ item }}
+    regexp='^error_reporting = .+$'
+    replace='error_reporting = E_ALL | E_STRICT'
+  with_items:
+    - /etc/php5/apache2/php.ini
+    - /etc/php5/cli/php.ini
   notify:
     - restart apache
 
